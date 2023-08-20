@@ -1,0 +1,71 @@
+package com.controller;
+
+import java.net.http.HttpRequest;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.entity.Account;
+import com.entity.Orders;
+import com.entity.Product;
+import com.service.AccountService;
+import com.service.OrdersService;
+import com.service.ProductService;
+
+@RestController
+@RequestMapping("orders")
+@CrossOrigin
+public class OrdersController {
+
+	@Autowired
+	ProductService productService;
+	@Autowired
+	OrdersService ordersService;
+	
+	 @Autowired
+	 AccountService accountService;
+	
+	@RequestMapping(value = "placeOrder/{pid}")
+	public String placeOrder(Model mm,@PathVariable("pid") int pid,HttpSession hs,Orders order) {
+		System.out.println("Pid is "+pid);
+		String emailid = (String)hs.getAttribute("email");
+		
+		  Account account = accountService.findByEmail(emailid); // Assuming you have an accountService to retrieve the Account entity
+		    order.setAccountid(account); // Set the Account reference
+		    order.setOrderplaced(LocalDate.now());
+		    order.setProduct(productService.findById(pid)); // Assuming you have a productService to retrieve the Product entity
+		    String result = ordersService.placeOrder(order);
+		    productService.decrementQty(pid);
+		    List<Product> listOfProducts = productService.findAllProducts();
+		    mm.addAttribute("products", listOfProducts);
+		    mm.addAttribute("msg", result);
+		    return "viewProductsByCustomer";
+		}
+	
+	@RequestMapping(value = "/viewOrderDetails",method = RequestMethod.GET)
+	public String viewOrder(Model mm, Orders oo) {
+		List<Orders> listOfOrders = ordersService.viewAllOrderDetails();
+		mm.addAttribute("orders", listOfOrders);
+		return "viewOrder";
+	}
+	@RequestMapping(value = "/viewPODetails", method = RequestMethod.GET)
+	public String viewPO(Model mm, HttpSession session) {
+	    String emailid = (String) session.getAttribute("emailid"); // get emailid from session
+	    List<Orders> listOfOrders = ordersService.viewAllOrderDetails();
+	    List<Orders> filteredOrders = listOfOrders.stream()
+	            .filter(order -> order.getEmailid().equals(emailid))
+	            .collect(Collectors.toList()); // filter orders by emailid
+	    mm.addAttribute("orders", filteredOrders);
+	    return "viewPurchaseReport";
+	}
+}

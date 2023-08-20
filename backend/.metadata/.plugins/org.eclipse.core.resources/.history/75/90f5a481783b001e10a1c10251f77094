@@ -1,0 +1,62 @@
+package com.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.entity.Product;
+import com.service.ProductService;
+
+@Controller
+public class ProductController {
+
+	
+	
+	@Autowired
+	ProductService productService;
+	
+	@GetMapping("/productadminHome")
+	public String adminHome(Model model) {
+	    List<Product> products = productService.findAllProducts();
+	    model.addAttribute("products", products);
+	    return "viewProduct";
+	}
+	
+	@RequestMapping(value = "/addProductPage",method = RequestMethod.GET)
+	public String openAddProductPage(Model mm, Product pp) {
+			mm.addAttribute("product", pp);
+		return "addProduct";
+	}
+	
+	
+	@RequestMapping(value = "/storeProductInfo",method = RequestMethod.POST)
+	public String storeProductData(Model mm,Product pp) {
+		String result = productService.storeProduct(pp);
+		mm.addAttribute("product", pp);
+		mm.addAttribute("msg", result);
+		System.out.println(pp);  
+		return "addProduct";
+	}
+	
+	
+	@RequestMapping(value = "/viewProductDetailsByCustomer",method = RequestMethod.GET)
+	public String viewProduct(Model mm, Product pp) {
+		List<Product> listOfProducts = productService.findAllProducts();
+		mm.addAttribute("products", listOfProducts);
+		return "viewProductsByCustomer";
+	}
+	@RequestMapping(value = "/viewProductDetails",method = RequestMethod.GET)
+	public String viewProducts(Model mm, Product pp) {
+		List<Product> listOfProducts = productService.findAllProducts();
+		mm.addAttribute("products", listOfProducts);
+		return "viewProduct";
+	}
+	
+}

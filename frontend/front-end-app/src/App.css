@@ -1,0 +1,59 @@
+/* Import Bootstrap styles */
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+/* Custom styles */
+body {
+  padding: 40px;
+}
+
+.container {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.custom-table {
+  width: auto; /* Adjust the width value as needed */
+}
+
+.column-width {
+  width: auto; /* Adjust the width value as needed */
+}
+
+.form-label {
+  font-weight: bold;
+}
+
+/* Blue-themed button styles */
+.btn-custom {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-custom:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* Custom link styles */
+.nav-link {
+  margin-right: 10px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: #0056b3;
+}

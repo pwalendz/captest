@@ -1,0 +1,65 @@
+package com.controller;
+
+import java.net.http.HttpRequest;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.entity.Account;
+import com.entity.Orders;
+import com.entity.Product;
+import com.service.AccountService;
+import com.service.OrdersService;
+import com.service.ProductService;
+
+@RestController
+@RequestMapping("orders")
+@CrossOrigin
+public class OrdersController {
+
+	@Autowired
+	ProductService productService;
+	@Autowired
+	OrdersService ordersService;
+	
+	 @Autowired
+	 AccountService accountService;
+	
+	 @PostMapping(value = "placeOrder/{pid}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	 public String placeOrder(@PathVariable("pid") int pid, HttpSession hs, @RequestBody Orders order, Model mm) {
+	     System.out.println("Pid is " + pid);
+	     String email = (String) hs.getAttribute("email");
+
+	     Account account = accountService.findByEmail(email); // Assuming you have an accountService to retrieve the Account entity
+	     order.setAccountid(account);
+	     order.setOrderplaced(LocalDate.now());
+	     order.setProduct(productService.findById(pid)); // Corrected method name
+	     String result = ordersService.placeOrder(order);
+	     productService.decrementQty(pid);
+	     List<Product> listOfProducts = productService.findAllProducts();
+	     mm.addAttribute("products", listOfProducts);
+	     mm.addAttribute("msg", result);
+	     return "viewProductsByCustomer";
+	 }
+
+	
+	@RequestMapping(value = "/viewOrderDetails",method = RequestMethod.GET)
+	public String viewOrder(Model mm, Orders oo) {
+		List<Orders> listOfOrders = ordersService.viewAllOrderDetails();
+		mm.addAttribute("orders", listOfOrders);
+		return "viewOrder";
+	}
+}

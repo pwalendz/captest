@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  spring-boot-app:
+    build:
+      #context: spring-boot-backend
+      dockerfile: Dockerfile
+    image: product-backend-app
+    container_name: spring-boot-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network  
+  product-frontend:
+    build:
+      #context: front-end-app
+      dockerfile: Dockerfile
+    image: product-frontend-app
+    container_name: front-end-app
+    ports:
+      - "80:80"
+    depends_on:
+    - spring-boot-app
+    networks:
+      - app-network
+networks:
+  app-network:
