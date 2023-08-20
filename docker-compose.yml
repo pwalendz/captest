@@ -11,10 +11,7 @@ services:
     networks:
       - app-network  
   product-frontend:
-    build:
-      context: ./frontend/front-end-app/
-      dockerfile: Dockerfile
-    image: product-frontend-app
+    image: pwalendz81/product-frontend-app1.0
     container_name: front-end-app
     ports:
       - "80:80"
