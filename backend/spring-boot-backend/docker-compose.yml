@@ -2,7 +2,7 @@ version: "3.7"
 services:
   spring-boot-app:
     build:
-      #context: spring-boot-backend
+      context: ./backend/spring-boot-backend/
       dockerfile: Dockerfile
     image: product-backend-app
     container_name: spring-boot-backend
@@ -12,7 +12,7 @@ services:
       - app-network  
   product-frontend:
     build:
-      #context: front-end-app
+      context: ./frontend/front-end-app/
       dockerfile: Dockerfile
     image: product-frontend-app
     container_name: front-end-app
